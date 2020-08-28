@@ -1,0 +1,145 @@
+	
+//	the main menu
+
+	//	mostly built with css and wordpress's built in nav walker to generate the html
+	//	some additional features are
+	//		- mobile menu css
+	//		- logo
+	//		- logo zoom animation
+	//		- multiple sizes
+
+	//	note that you must specify a screen to switch to mobile css manually using the maxwidth property
+
+	add_shortcode('hc2_nav', 'hc2_nav_shortcode');
+	function hc2_nav_shortcode($atts, $content = null) {
+
+		//shortcode properties
+		$a = shortcode_atts(array( 
+				'fromtop' => '0',
+				'menu' => '',
+				'maxwidth' => '1000px', 
+				'style' => 'normal', 
+				'color' => '', 
+				'background' => '',
+				'dropdown' => '', 
+				'accent' => '', 
+				'position' => 'relative', 
+				'size' => 'sizeb', 
+				'media' => '', 
+				'logoscale' => '250', 
+				'logopos' => '0', 
+				'zoom' => '0' 
+			), $atts);
+		
+		//a menu must be defined
+		if( !$a['menu'] )return '';
+		
+		//capture html as a string
+		ob_start(); 
+			?>
+			
+				<nav id="hcube-menu" class="hcube-menu hcube-menu-right hcube-menu-<?php echo $a['style']; ?> hcube-menu-<?php echo $a['size']; ?>" data-full-width="true" style="top:<?php echo $a['fromtop']; ?>px" >
+					<div class="hcube-menu-inner">
+						<div id="hcube-animtar" class="hcube-menu-logo hcube-animation-wrapper hcube-animation-logo"></div>
+						<?php echo wp_nav_menu(array('walker' => new rc_scm_walker,'echo' => false,'theme_location' => $a['menu'],'items_wrap' => '<ul id="%1$s" class="%2$s">%3$s</ul>')); ?>
+					</div>
+					<div class="hcube-hamburger" aria-label="Menu" tabIndex="0" role="button" data-vars-name="Hamburger Menu" on="tap:hcube-menu.toggleClass(class=hcube-menu-open)"><i class="fas fa-bars"></i></div>
+					
+					<style>
+						.hcube-menu-open > .hcube-hamburger {background: <?php echo $a['dropdown']; ?> !important;}
+						nav#hcube-menu.hcube-menu-normal .hcube-menu-logo{background-image: url(<?php echo $a['media']; ?>);}
+						nav#hcube-menu.hcube-menu-sizea > div > div > ul > li > [data-mega]{top:51px}
+						nav#hcube-menu.hcube-menu-sizeb > div > div > ul > li > [data-mega]{top:65px}
+						nav#hcube-menu > div > div > ul > li.hcube-menu-open > a {border-top: 3px solid <?php echo $a['accent']; ?>;}
+						nav#hcube-menu.hcube-menu-normal  [data-button="true"]{background: <?php echo $a['accent']; ?>;}
+						<?php if( $a['position']=='sticky' ){ ?>.hcube-content nav#hcube-menu{position: sticky;position: -webkit-sticky;position: -moz-sticky;position: -ms-sticky;position: -o-sticky;top: 0;}<?php } ?>
+						<?php if( $a['position']=='fixed' ){ ?>.hcube-content nav#hcube-menu{position: fixed;top: 0;}<?php } ?>
+						nav#hcube-menu .hcube-menu-logo{height:70px;}
+						nav#hcube-menu.hcube-menu-normal > div {text-align: right;}
+						nav#hcube-menu.hcube-menu-normal > div > div {display:inline-block;}
+						nav#hcube-menu,#hcube-menu a,nav#hcube-menu,#hcube-menu li{color:<?php echo $a['color']; ?>;}
+						nav#hcube-menu {background-color:<?php echo $a['background']; ?>;}
+						nav#hcube-menu.hcube-menu-normal {z-index: 999999999;}
+						nav#hcube-menu.hcube-menu-open {z-index: 9999999999;}
+						nav#hcube-menu ul.sub-menu {background: <?php echo $a['dropdown']; ?> ;}
+						nav#hcube-menu li.hcube-menu-open > ul.sub-menu {border-bottom: 1px solid <?php echo $a['accent']; ?>;border-top: 3px solid <?php echo $a['accent']; ?> ;}
+						nav#hcube-menu ul ul li.hcube-menu-open > ul.sub-menu {border-left: 1px solid <?php echo $a['accent']; ?>;border-right: 1px solid <?php echo $a['accent']; ?>;}
+						nav#hcube-menu li.menu-item-has-children > a:after {border-left: 3px solid <?php echo $a['accent']; ?>;border-bottom: 3px solid <?php echo $a['accent']; ?>;}
+						nav#hcube-menu a > i {color:<?php echo $a['accent']; ?>}
+						nav#hcube-menu .sub-menu li.hcube-menu-open > a, nav#hcube-menu .sub-menu li.hcube-menu-open > a > i {color: white;    padding-right: 30px;}
+						nav#hcube-menu .sub-menu li.hcube-menu-open > a:not(#_) {background: <?php echo $a['accent']; ?>;    padding-left: 30px;}
+						nav#hcube-menu li.menu-item:not(.hcube-menu-open) li > a {padding-left: 0;padding-right: 0;}
+						nav#hcube-menu > div > div > ul > li > a > i { display:none;}
+						nav#hcube-menu.hcube-menu-sizeb ul ul a > i {padding-right: 27px;}
+						nav#hcube-menu.hcube-menu-sizeb ul ul a {padding-left: 27px;}
+						nav#hcube-menu.hcube-menu-sizeb .sub-menu li.hcube-menu-open > a > i {padding-right: 37px;}
+						nav#hcube-menu.hcube-menu-sizeb .sub-menu li.hcube-menu-open > a {padding-left: 37px;}
+						@media (min-width:<?php echo $a['maxwidth']; ?>){
+							nav#hcube-menu.hcube-menu-sizea .hcube-menu-logo{height:55px;}
+							nav#hcube-menu li.menu-item > a:hover, nav#hcube-menu li.menu-item.hcube-menu-open > a{    background: rgba(0,0,0,.2);}
+							nav#hcube-menu.hcube-menu-sizea.hcube-menu-normal {height: 55px;}
+							nav#hcube-menu.hcube-menu-sizeb.hcube-menu-normal {height: 70px;}
+							nav#hcube-menu.hcube-menu-normal.hcube-menu-right .hcube-menu-logo{background-position: 20px center;left: 0;right:auto;transform-origin:top left;}
+							nav#hcube-menu.hcube-menu-normal.hcube-menu-left .hcube-menu-logo{background-position: calc( 100% - 20px ) center;right: 0;left:auto;transform-origin:top right;}
+							nav#hcube-menu.hcube-menu-normal > div > div > ul > li > ul.sub-menu{left:auto;right:auto;right:0;}
+							nav#hcube-menu > div > div > ul > li > ul > li > a:not(#_):not(#_):hover {background: linear-gradient( 90deg,rgba(0,0,0,.2),transparent) }
+							nav#hcube-menu > div > div > ul > li > ul > li.hcube-menu-open > a:not(#_):not(#_) {background: linear-gradient( 90deg,<?php echo $a['accent']; ?>,transparent) }
+							nav#hcube-menu.hcube-menu-sizea ul ul .sub-menu {left: 55px;}
+							nav#hcube-menu.hcube-menu-sizeb ul ul .sub-menu {left: 70px;}
+							nav#hcube-menu > div > div > ul > li > a[href],nav#hcube-menu > div > div > ul > li.menu-item > a{color: <?php echo $a['color']; ?>;    opacity: 1;}
+						}
+						@media (max-width:<?php echo $a['maxwidth']; ?>){
+							nav#hcube-menu.hcube-menu-sizeb a > i {padding-right: 27px;}
+							nav#hcube-menu.hcube-menu-sizeb a {padding-left: 27px;}
+							nav#hcube-menu.hcube-menu-normal .hcube-menu-logo{background-position: 20px center;left: 0;right:auto;transform-origin:top left;}
+							nav#hcube-menu.hcube-menu-normal [data-button="true"]{background: transparent;}
+							nav#hcube-menu .hcube-mega-media {display:none;}
+							nav#hcube-menu.hcube-menu-normal > div > div > ul > li.hcube-mega-menu > ul > li{width:100%;}
+							nav#hcube-menu ul ul{    margin: -3px 0 0 0;}
+							nav#hcube-menu.hcube-menu-sizea > div > div > ul > li > ul.sub-menu {    margin-top: -55px;left: 55px;}
+							nav#hcube-menu.hcube-menu-sizeb > div > div > ul > li > ul.sub-menu {    margin-top: -70px;left: 70px;}
+							nav#hcube-menu li.hcube-menu-open > a, nav#hcube-menu li.hcube-menu-open > a > i {color: white;  }
+							nav#hcube-menu li.hcube-menu-open > a {background: <?php echo $a['accent']; ?>;    }
+							nav#hcube-menu.hcube-menu-sizea ul ul .sub-menu a {padding-left: 30px;}
+							nav#hcube-menu.hcube-menu-sizeb ul ul .sub-menu a {padding-left: 37px;}
+							nav#hcube-menu > div > div > ul > li > a > i { display:inline-block;}
+							nav#hcube-menu ul.menu {border-top: 3px solid transparent;border-bottom: 1px solid transparent;}
+							nav#hcube-menu ul.menu{margin-top: 70px;}
+							nav#hcube-menu ul.menu {position: absolute;    left: 0;    top: 0;width: 0;transition: all .3s;overflow: hidden;margin-bottom: 0;background-color:<?php echo $a['dropdown']; ?>;padding: 0px;box-sizing: border-box;}
+							nav#hcube-menu.hcube-menu-open ul.menu {overflow:visible;width: 100%;    box-shadow: 0 30px 30px -20px #000;border-top: 3px solid <?php echo $a['accent']; ?>;border-bottom: 1px solid <?php echo $a['accent']; ?>;}
+							nav#hcube-menu li.hcube-menu-open > ul.sub-menu {width:calc( 100% - 70px );}
+							nav#hcube-menu div.hcube-hamburger{color:<?php echo $a['accent']; ?>;display: block;position: absolute;right: 13px;top: 15px;background: none !important;font-size: 28px;cursor: pointer;height: auto !important;outline: none;padding: 5px 10px;}
+							nav#hcube-menu.hcube-menu-open li:before{display:inline}
+							nav#hcube-menu ul.menu li {display: block;padding: 0;}
+							nav#hcube-menu.hcube-menu-open ul.menu li:before {margin-right: 8px;	}
+							nav#hcube-menu.hcube-menu-open > div > div {width: 100%;	    float: none;    display: inline-block;    overflow: hidden;}
+							nav#hcube-menu.hcube-menu-normal {height: 70px;padding: 0;    overflow: visible;}
+							nav#hcube-menu.hcube-menu-normal > div {height: 70px;background-size: auto 40px;}
+							nav#hcube-menu:not(.hcube-menu-open) .sub-menu {width:0;}
+							nav#hcube-menu.hcube-menu-normal.hcube-menu-open > .hcube-menu-inner {overflow-y: scroll;overflow-x: hidden;height: 100vh;}
+							nav#hcube-menu ul ul li.hcube-menu-open > ul.sub-menu {position: relative;display: inline-block;width: 100%;}
+						}
+						@media (max-width:450px){
+							div#hcube-animtar:not(#_) {max-width: calc(<?php echo (10000/$a['logoscale'])+'% - '+(10000/$a['logoscale']); ?>px );margin-left: 25px;background-size: contain;background-position: 50% 50%;}
+						}
+						<?php if( $a['zoom'] ){ ?>
+							nav#hcube-menu .hcube-animation-logo{transform: translate(0px,0px) scale(2.5);}
+							nav#hcube-menu .hcube-menu-open > .hcube-hamburger {background:inherit !important;}
+						<?php } ?>
+					</style>
+					
+				</nav>
+				
+				<div class="hcube-menu-outer">
+					<?php if( $a['zoom'] ){ ?>
+						<amp-animation id="hcube-anima" layout="nodisplay" ><script type="application/json">{ "direction": "alternate", "duration": "300", "delay": 0, "fill": "both", "selector": "#hcube-animtar", "keyframes": {"easing": "ease-out", "transform": "scale(1) translate(0,0)"} }</script></amp-animation>
+						<amp-animation id="hcube-animb" layout="nodisplay" ><script type="application/json">{ "direction": "alternate", "duration": "300", "delay": 0, "fill": "both", "selector": "#hcube-animtar", "keyframes": {"easing": "ease-out", "transform": "scale(<?php echo $a['logoscale']/100; ?>) translate(0px,<?php echo $a['logopos']; ?>px)"} }</script></amp-animation>
+						<amp-position-observer intersection-ratios="0" on="exit:hcube-anima.start;enter:hcube-animb.start" layout="nodisplay"></amp-position-observer>
+					<?php } ?>
+				</div>
+				
+			<?php
+
+		return ob_get_clean(); //output the html
+
+	}

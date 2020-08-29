@@ -144,7 +144,7 @@
 
 	}
  
-	if(!is_admin())add_action('init', function() {
+	add_action('wp_head', function() {
 		?>
 			<style>
 			

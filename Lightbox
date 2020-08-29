@@ -1,0 +1,9 @@
+add_shortcode('hc2_lightbox', 'hc2_lightbox');
+function hc2_lightbox($atts, $content = null) {
+	$a = shortcode_atts(array( 'uid' => '', 'end' => '' ), $atts);
+			
+	if( $a['end'] ) return "</amp-lightbox>";
+
+	return "<amp-lightbox layout='nodisplay' scrollable='true' id='modal-".$a['uid']."'>";
+		
+}

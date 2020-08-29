@@ -143,3 +143,276 @@
 		return ob_get_clean(); //output the html
 
 	}
+
+<?php
+
+	if ( ! defined( 'ABSPATH' ) ) exit;
+	
+	add_action( 'init', 'hc2_register_main_menu' );
+	function hc2_register_main_menu() { 
+		register_nav_menu('main-menu',__( 'main-menu' ));
+		register_nav_menu('main-menu-b',__( 'main-menu-b' ));
+		register_nav_menu('main-menu-c',__( 'main-menu-c' ));
+		add_post_type_support( 'page', 'excerpt' );
+		add_theme_support( 'post-thumbnails' );
+	}
+	add_action( 'init', 'hc2_create_menus' );
+	function hc2_create_menus(){
+		$languages = get_hc2('settings','languages');
+		if( is_array($languages) )foreach( $languages as $lang )register_nav_menus(array($lang.'-menu' => __( $lang.' Menu' )));
+	}
+	
+	class Walker_Nav_Menu_Edit_Custom extends Walker_Nav_Menu  {
+		
+		function start_lvl(&$output, $depth = 0, $args = Array()) {}
+		function end_lvl(&$output, $depth = 0, $args = Array()) {}
+
+		function start_el(&$output, $item, $depth = 0, $args = Array(), $id = 0) {
+			global $_wp_nav_menu_max_depth;
+		   
+			$_wp_nav_menu_max_depth = $depth > $_wp_nav_menu_max_depth ? $depth : $_wp_nav_menu_max_depth;
+		
+			$indent = ( $depth ) ? str_repeat( "\t", $depth ) : '';
+		
+			ob_start();
+			$item_id = esc_attr( $item->ID );
+			$removed_args = array( 'action', 'customlink-tab', 'edit-menu-item', 'menu-item', 'page-tab', '_wpnonce', );
+		
+			$original_title = '';
+			if ( 'taxonomy' == $item->type ) {
+				$original_title = get_term_field( 'name', $item->object_id, $item->object, 'raw' );
+				if ( is_wp_error( $original_title ) )
+					$original_title = false;
+			} elseif ( 'post_type' == $item->type ) {
+				$original_object = get_post( $item->object_id );
+				$original_title = $original_object->post_title;
+			}
+		
+			$classes = array( 'menu-item menu-item-depth-' . $depth, 'menu-item-' . esc_attr( $item->object ), 'menu-item-edit-' . ( ( isset( $_GET['edit-menu-item'] ) && $item_id == $_GET['edit-menu-item'] ) ? 'active' : 'inactive'),);
+		
+			$title = $item->title;
+		
+			if ( ! empty( $item->_invalid ) ) {
+				$classes[] = 'menu-item-invalid';
+				$title = sprintf( __( '%s (Invalid)' ), $item->title );
+			} elseif ( isset( $item->post_status ) && 'draft' == $item->post_status ) {
+				$classes[] = 'pending';
+				$title = sprintf( __('%s (Pending)'), $item->title );
+			}
+		
+			$title = empty( $item->label ) ? $title : $item->label;
+		
+			?>
+			<style>
+			p.field-custom.description:not(.description-thin) {text-align: right;margin-right: 20px;}
+			p.field-custom.description:not(.description-thin) input {float: right;margin: 4px;height: 15px;width: 15px;}
+			p.field-custom.description:not(.description-thin) input:before {height: 20px;width: 20px;margin-left: -4px;}
+			</style>
+			<li id="menu-item-<?php echo $item_id; ?>" class="<?php echo implode(' ', $classes ); ?>">
+				<dl class="menu-item-bar">
+					<dt class="menu-item-handle">
+						<span class="item-title"><?php echo esc_html( $title ); ?></span>
+						<span class="item-controls">
+							<span class="item-type"><?php echo esc_html( $item->type_label ); ?></span>
+							<span class="item-order hide-if-js">
+								<a href="<?php echo wp_nonce_url( add_query_arg( array( 'action' => 'move-up-menu-item', 'menu-item' => $item_id, ), remove_query_arg($removed_args, admin_url( 'nav-menus.php' ) ) ), 'move-menu_item' ); ?>" class="item-move-up"><abbr title="<?php esc_attr_e('Move up'); ?>">&#8593;</abbr></a>
+								| <a href="<?php echo wp_nonce_url( add_query_arg( array( 'action' => 'move-down-menu-item', 'menu-item' => $item_id, ), remove_query_arg($removed_args, admin_url( 'nav-menus.php' ) ) ), 'move-menu_item' ); ?>" class="item-move-down"><abbr title="<?php esc_attr_e('Move down'); ?>">&#8595;</abbr></a>
+							</span>
+							<a class="item-edit" id="edit-<?php echo $item_id; ?>" title="<?php esc_attr_e('Edit Menu Item'); ?>" href="<?php echo ( isset( $_GET['edit-menu-item'] ) && $item_id == $_GET['edit-menu-item'] ) ? admin_url( 'nav-menus.php' ) : add_query_arg( 'edit-menu-item', $item_id, remove_query_arg( $removed_args, admin_url( 'nav-menus.php#menu-item-settings-' . $item_id ) ) ); ?>"></a>
+						</span>
+					</dt>
+				</dl>
+		
+				<div class="menu-item-settings" style='min-height:110px;' id="menu-item-settings-<?php echo $item_id; ?>">
+					<?php if( 'custom' == $item->type ) : ?>
+						<p class="field-url description description-wide">
+							<label for="edit-menu-item-url-<?php echo $item_id; ?>">
+								<?php _e( 'URL' ); ?><br />
+								<input type="text" id="edit-menu-item-url-<?php echo $item_id; ?>" class="widefat code edit-menu-item-url" name="menu-item-url[<?php echo $item_id; ?>]" value="<?php echo esc_attr( $item->url ); ?>" />
+							</label>
+						</p>
+					<?php endif; ?>
+					<p class="description description-thin"><label for="edit-menu-item-title-<?php echo $item_id; ?>"><?php _e( 'Navigation Label' ); ?><br />
+							<input type="text" id="edit-menu-item-title-<?php echo $item_id; ?>" class="widefat edit-menu-item-title" name="menu-item-title[<?php echo $item_id; ?>]" value="<?php echo esc_attr( $item->title ); ?>" /></label></p>
+					<p class="field-link-target description"><label for="edit-menu-item-target-<?php echo $item_id; ?>">
+							<input type="checkbox" id="edit-menu-item-target-<?php echo $item_id; ?>" value="_blank" name="menu-item-target[<?php echo $item_id; ?>]"<?php checked( $item->target, '_blank' ); ?> /><?php _e( 'Open link in a new window/tab' ); ?></label></p>
+					<p class="field-css-classes description description-thin"><label for="edit-menu-item-classes-<?php echo $item_id; ?>"><?php _e( 'CSS Classes (optional)' ); ?><br />
+							<input type="text" id="edit-menu-item-classes-<?php echo $item_id; ?>" class="widefat code edit-menu-item-classes" name="menu-item-classes[<?php echo $item_id; ?>]" value="<?php echo esc_attr( implode(' ', $item->classes ) ); ?>" /></label></p>
+					<p class="field-xfn description description-thin"><label for="edit-menu-item-xfn-<?php echo $item_id; ?>"><?php _e( 'Link Relationship (XFN)' ); ?><br />
+							<input type="text" id="edit-menu-item-xfn-<?php echo $item_id; ?>" class="widefat code edit-menu-item-xfn" name="menu-item-xfn[<?php echo $item_id; ?>]" value="<?php echo esc_attr( $item->xfn ); ?>" /></label></p>
+					<p class="field-description description description-wide"><label for="edit-menu-item-description-<?php echo $item_id; ?>"><?php _e( 'Description' ); ?><br />
+							<textarea id="edit-menu-item-description-<?php echo $item_id; ?>" class="widefat edit-menu-item-description" rows="3" cols="20" name="menu-item-description[<?php echo $item_id; ?>]"><?php echo esc_html( $item->description ); ?></textarea><span class="description"><?php _e('The description will be displayed in the menu if the current theme supports it.'); ?></span></label></p>	  
+					
+					<p class="field-custom description description-thin"><label for="edit-menu-item-mediaid-<?php echo $item_id; ?>"><?php _e( 'Media Block ID' ); ?><br />
+							<input type="text" id="edit-menu-item-mediaid-<?php echo $item_id; ?>" class="widefat code edit-menu-item-custom" name="menu-item-mediaid[<?php echo $item_id; ?>]" value="<?php echo esc_attr( $item->mediaid ); ?>" /></label></p>
+					<p class="field-custom description description-thin"><label for="edit-menu-item-faicon-<?php echo $item_id; ?>"><?php _e( 'Font Awesome Icon' ); ?><br />
+							<input type="text" id="edit-menu-item-faicon-<?php echo $item_id; ?>" class="icon-class-input widefat code edit-menu-item-custom" name="menu-item-faicon[<?php echo $item_id; ?>]" value="<?php echo esc_attr( $item->faicon ); ?>" /><span class="demo-icon <?php echo esc_attr( $item->faicon ); ?>"></span></label></p>
+					<p class="field-custom description"><label for="edit-menu-item-ext-<?php echo $item_id; ?>">
+							<input type="checkbox" id="edit-menu-item-ext-<?php echo $item_id; ?>" value="_blank" name="menu-item-ext[<?php echo $item_id; ?>]"<?php checked( $item->ext, '_blank' ); ?> /><?php _e( 'Is Heading' ); ?></label></p>
+				
+					<?php if($depth==0){ ?>
+						<?php 
+							$languages = get_hc2('settings','languages');
+							if( ($languages) && count($languages) > 1 ){ ?>
+								<p class="field-custom description"><label for="edit-menu-item-lang-<?php echo $item_id; ?>">
+									<input type="checkbox" id="edit-menu-item-lang-<?php echo $item_id; ?>" value="_blank" name="menu-item-lang[<?php echo $item_id; ?>]"<?php checked( $item->lang, '_blank' ); ?> /><?php _e( 'Is Language Button' ); ?></label></p>
+						<?php } ?>
+						<p class="field-custom description"><label for="edit-menu-item-mega-<?php echo $item_id; ?>">
+							<input type="checkbox" id="edit-menu-item-mega-<?php echo $item_id; ?>" value="_blank" name="menu-item-mega[<?php echo $item_id; ?>]"<?php checked( $item->mega, '_blank' ); ?> /><?php _e( 'Mega Menu' ); ?></label></p>
+						<p class="field-custom description"><label for="edit-menu-item-button-<?php echo $item_id; ?>">
+							<input type="checkbox" id="edit-menu-item-button-<?php echo $item_id; ?>" value="_blank" name="menu-item-button[<?php echo $item_id; ?>]"<?php checked( $item->button, '_blank' ); ?> /><?php _e( 'Display as Button' ); ?></label></p>
+					<?php } ?>
+					
+					<div class="menu-item-actions description-wide submitbox">
+						<?php if( 'custom' != $item->type && $original_title !== false ) : ?>
+							<p class="link-to-original"><?php printf( __('Original: %s'), '<a href="' . esc_attr( $item->url ) . '">' . esc_html( $original_title ) . '</a>' ); ?></p>
+						<?php endif; ?>
+						<a class="item-delete submitdelete deletion" id="delete-<?php echo $item_id; ?>" href="<?php echo wp_nonce_url( add_query_arg( array( 'action' => 'delete-menu-item', 'menu-item' => $item_id, ), remove_query_arg($removed_args, admin_url( 'nav-menus.php' ) ) ), 'delete-menu_item_' . $item_id); ?>"><?php _e('Remove'); ?></a> 
+						<span class="meta-sep"> | </span> 
+						<a class="item-cancel submitcancel" id="cancel-<?php echo $item_id; ?>" href="<?php echo esc_url( add_query_arg( array('edit-menu-item' => $item_id, 'cancel' => time()), remove_query_arg( $removed_args, admin_url( 'nav-menus.php' ) ) ) );?>#menu-item-settings-<?php echo $item_id; ?>"><?php _e('Cancel'); ?></a>
+					</div>
+		
+					<input class="menu-item-data-db-id" type="hidden" name="menu-item-db-id[<?php echo $item_id; ?>]" value="<?php echo $item_id; ?>" />
+					<input class="menu-item-data-object-id" type="hidden" name="menu-item-object-id[<?php echo $item_id; ?>]" value="<?php echo esc_attr( $item->object_id ); ?>" />
+					<input class="menu-item-data-object" type="hidden" name="menu-item-object[<?php echo $item_id; ?>]" value="<?php echo esc_attr( $item->object ); ?>" />
+					<input class="menu-item-data-parent-id" type="hidden" name="menu-item-parent-id[<?php echo $item_id; ?>]" value="<?php echo esc_attr( $item->menu_item_parent ); ?>" />
+					<input class="menu-item-data-position" type="hidden" name="menu-item-position[<?php echo $item_id; ?>]" value="<?php echo esc_attr( $item->menu_order ); ?>" />
+					<input class="menu-item-data-type" type="hidden" name="menu-item-type[<?php echo $item_id; ?>]" value="<?php echo esc_attr( $item->type ); ?>" />
+				</div>
+				<ul class="menu-item-transport"></ul>
+			<?php
+			
+			$output .= ob_get_clean();
+			
+
+		}
+	}
+
+	class rc_sweet_custom_menu {
+		
+		function __construct() {
+			add_filter( 'wp_setup_nav_menu_item', array( $this, 'rc_scm_add_custom_nav_fields' ) );
+			add_action( 'wp_update_nav_menu_item', array( $this, 'rc_scm_update_custom_nav_fields'), 10, 3 );
+			add_filter( 'wp_edit_nav_menu_walker', array( $this, 'rc_scm_edit_walker'), 10, 2 );
+		} 
+		
+		function rc_scm_add_custom_nav_fields( $menu_item ) {
+			$menu_item->mediaid = get_post_meta( $menu_item->ID, '_menu_item_mediaid', true );
+			$menu_item->faicon = get_post_meta( $menu_item->ID, '_menu_item_faicon', true );
+			$menu_item->mega = get_post_meta( $menu_item->ID, '_menu_item_mega', true );
+			$menu_item->lang = get_post_meta( $menu_item->ID, '_menu_item_lang', true );
+			$menu_item->button = get_post_meta( $menu_item->ID, '_menu_item_button', true );
+			$menu_item->ext = get_post_meta( $menu_item->ID, '_menu_item_ext', true );
+			return $menu_item;
+		}
+		
+		function rc_scm_update_custom_nav_fields( $menu_id, $menu_item_db_id, $args ) {
+			if ( array_key_exists('menu-item-mediaid',$_REQUEST) && is_array( $_REQUEST['menu-item-mediaid']) ) {
+				$mediaid_value = $_REQUEST['menu-item-mediaid'][$menu_item_db_id];
+				update_post_meta( $menu_item_db_id, '_menu_item_mediaid', $mediaid_value );
+			}
+			if ( array_key_exists('menu-item-faicon',$_REQUEST) && is_array( $_REQUEST['menu-item-faicon']) ) {
+				$faicon_value = $_REQUEST['menu-item-faicon'][$menu_item_db_id];
+				update_post_meta( $menu_item_db_id, '_menu_item_faicon', $faicon_value );
+			}
+			if ( array_key_exists('menu-item-lang',$_REQUEST) && is_array( $_REQUEST['menu-item-lang']) ) {
+				$lang_value = $_REQUEST['menu-item-lang'][$menu_item_db_id];
+				update_post_meta( $menu_item_db_id, '_menu_item_lang', $lang_value );
+			}
+			update_post_meta( $menu_item_db_id, '_menu_item_mega', ( array_key_exists('menu-item-mega',$_REQUEST) && array_key_exists($menu_item_db_id,$_REQUEST['menu-item-mega']) ) ? '_blank' : '' ); 
+			update_post_meta( $menu_item_db_id, '_menu_item_button', ( array_key_exists('menu-item-button',$_REQUEST) && array_key_exists($menu_item_db_id,$_REQUEST['menu-item-button']) ) ? '_blank' : '' ); 
+			update_post_meta( $menu_item_db_id, '_menu_item_ext', ( array_key_exists('menu-item-ext',$_REQUEST) && array_key_exists($menu_item_db_id,$_REQUEST['menu-item-ext']) ) ? '_blank' : '' ); 
+
+		}
+		
+		function rc_scm_edit_walker($walker,$menu_id) {
+			return 'Walker_Nav_Menu_Edit_Custom';
+		}
+		
+	}
+
+	$GLOBALS['sweet_custom_menu'] = new rc_sweet_custom_menu();
+	
+	class rc_scm_walker extends Walker_Nav_Menu
+	{
+		function start_el(&$output, $item, $depth = 0, $args = Array(), $id = 0)
+		{
+		   $uid = uniqid (rand(),false);
+		   
+	     $indent = ( $depth ) ? str_repeat( "\t", $depth ) : '';
+
+	     $class_names = $value = '';
+
+	     $classes = empty( $item->classes ) ? array() : (array) $item->classes;
+
+	     $class_names = ' class="';
+	     $class_names .= esc_attr( join( ' ', apply_filters( 'nav_menu_css_class', array_filter( $classes ), $item ) ) );
+	     $class_names .= ! empty( $item->mega ) 	? ' hcube-mega-menu' : '';
+	     $class_names .= '"';
+
+		   $is_button = '';
+		   if(! empty( $item->button ) && $depth == 0 ) $is_button = ' data-button="true" ';
+	     $output .= $indent . '<li id="menu-item-'.$uid.'-'. $item->ID . '"' . $value . $class_names . $is_button . '>';
+
+	     $attributes  = ! empty( $item->attr_title ) ? ' title="'  . esc_attr( $item->attr_title ) .'"' : '';
+	     $attributes .= ! empty( $item->target )     ? ' target="' . esc_attr( $item->target     ) .'"' : '';
+	     $attributes .= ! empty( $item->xfn )	  ? ' rel="'    . esc_attr( $item->xfn	  ) .'"' : '';
+		   
+		   
+		   $href = esc_attr( $item->url );
+		   
+	     $attributes .= !empty( $item->url ) && empty( $item->ext ) && empty( $item->lang ) ? ' data-vars-name="Menu Item - '.$item->title.'" href="' . $href . '"' : '';
+	     $attributes .= !empty( $item->lang ) ? ' data-vars-name="Menu Item - '.$item->title.'" href="' . get_post_meta( get_post_meta( get_the_ID(), 'hcube_mainpage', true), 'hcube_eq_page_'.strtolower($item->title), true ) . '"' : '';
+		   
+		   if(strpos( $class_names, 'has-children') !== false){
+				$attributes .= ' tabindex=0 role=button aria-label="'.$item->title.'" data-vars-name="Open Menu - '.$item->title.'" on="tap:menu-item-'.$uid.'-'.$item->ID.'.toggleClass(class=hcube-menu-open),menu-'.$args->menu->slug.'.toggleClass(class=hcube-menu-subopen-'.$uid.'-'.$item->ID.')';
+				if($depth != 0) $attributes .= ',menu-'.$args->menu->slug.'.toggleClass(class=hcube-menu-subopen)';
+				$attributes .= '"' ;
+		   }
+
+	     $description  = ! empty( $item->description ) ? '<span>'.esc_attr( $item->description ).'</span>' : '';
+
+	     if($depth != 0){ $description = $append = $prepend = ""; }
+
+		$item_output = $args->before;
+			
+		$item_output .= '<div class="hcube-menu-exit" aria-label="'.$item->title.'" tabindex=0 role=button data-vars-name="Close Menu - '.$item->title.'"  on="tap:menu-item-'.$uid.'-'.$item->ID.'.toggleClass(class=hcube-menu-open),menu-'.$args->menu->slug.'.toggleClass(class=hcube-menu-subopen-'.$uid.'-'.$item->ID.')';
+			if($depth != 0) $item_output .= ',menu-'.$args->menu->slug.'.toggleClass(class=hcube-menu-subopen)';
+			$item_output .= '"></div>';
+			
+		$item_output .= '<a'. $attributes .'>';
+		$item_output .= '<i class="'.$item->faicon.'"></i>';
+		$item_output .= $args->link_before .apply_filters( 'the_title', $item->title, $item->ID );
+		$item_output .= $description.$args->link_after;
+		$item_output .= '</a>';
+			if($depth == 1) $item_output .= '<style>
+				.hcube-menu-subopen-'.$uid.'-'.$item->ID.' > .hcube-menu-open > ul > li:not(#menu-item-'.$uid.'-'.$item->ID.') > a,
+				.hcube-menu-subopen-'.$uid.'-'.$item->ID.' > .hcube-menu-open > ul > li:not(#menu-item-'.$uid.'-'.$item->ID.') > a:after 
+					{ opacity:.5; }
+			</style>';
+			if($depth == 0) $item_output .= '<style>
+				.hcube-menu-subopen-'.$uid.'-'.$item->ID.' > li:not(#menu-item-'.$uid.'-'.$item->ID.') > a,
+				.hcube-menu-subopen-'.$uid.'-'.$item->ID.' > li:not(#menu-item-'.$uid.'-'.$item->ID.') > a:after 
+					{ opacity:.5; }
+			</style>';
+			
+		$item_output .= $args->after;
+			
+			$submenus = $depth == 0 ? get_posts( array( 'post_type' => 'nav_menu_item', 'numberposts' => -1, 'orderby' => 'menu_order', 'order' => 'ASC', 'meta_query' => array( array( 'key' => '_menu_item_menu_item_parent', 'value' => $item->ID ) ) ) ) : false;
+			
+			if(! empty( $item->mediaid ) ){
+				$item_output .= '<div class="hcube-mega-media" data-mega="'.$uid.'" >';
+					$looop = parse_blocks( get_the_content(null,null,get_hc2('settings','megamenu_post_id')) );
+					foreach($looop as $lop){
+						 if(array_key_exists("mediaid", $lop["attrs"]) && $lop["attrs"]["mediaid"]==$item->mediaid){
+							 $item_output .= do_shortcode(render_block($lop));
+						 }
+					}
+				if($depth == 0) $item_output .= '<style>.hcube-menu-sizea [data-mega="'.$uid.'"]{height:'.(count( $submenus )*55).'px;}.hcube-menu-sizeb [data-mega="'.$uid.'"]{height:'.(count( $submenus )*70).'px;}</style>';
+				$item_output .= '</div>';
+			}
+			
+
+		$output .= apply_filters( 'walker_nav_menu_start_el', $item_output, $item, $depth, $args, $id );
+	  }
+	}

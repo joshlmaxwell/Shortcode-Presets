@@ -207,7 +207,7 @@
 				nav.hcube-menu-sizeb.hcube-menu-normal,nav.hcube-menu-sizeb.hcube-menu-normal > div{height: 70px;}
 			</style>
 		<?php
-	}
+	});
 	
 	add_action( 'init', 'hc2_register_main_menu' );
 	function hc2_register_main_menu() { 

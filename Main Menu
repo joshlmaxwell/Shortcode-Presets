@@ -144,7 +144,7 @@
 
 	}
  
-	add_action('init', function() {
+	if(!is_admin())add_action('init', function() {
 		?>
 			<style>
 			

@@ -1,14 +1,12 @@
 add_shortcode('hc2_hours', 'hc2_hours');
 function hc2_hours($atts, $content = null) {
-	ob_start(); 
-		?>
 
-			$hours = get_hc2('places',1)['alt-hours'];
+	$hours = get_hc2('places',1)['alt-hours'];
 
-			echo "<ul class='hc2_hours'>";
-				foreach($hours as $hour) echo '<li>'.$hour.'</li>'; 
-			echo "</ul>";
+	$str = "<ul class='hc2_hours'>";
+	foreach($hours as $hour) 
+		$str .= '<li>'.$hour.'</li>'; 
+	$str .= "</ul>";
 
-		<?php
-	return hc2_return_php( ob_get_clean() ); 
+	return $str;
 }

@@ -3,7 +3,7 @@ function hc2_amp_recent_posts($atts, $content = null) {
 	ob_start(); 
 		?>
 
-			<amp-list load-more='auto' layout='responsive' width='1200' height='200' layout='fixed-height' src='<?php echo str_replace('http:','https:',get_rest_url()); ?>hc2/v1/hc2_amp_recent_posts'>
+			<amp-list load-more='auto' width='1200' height='200' layout='fixed-height' src='<?php echo str_replace('http:','https:',get_rest_url()); ?>hc2/v1/hc2_amp_recent_posts'>
 				<template type='amp-mustache'>
 					<p class="has-text-align-left has-hcube-color-slug-6-color has-text-color"><a href="/{{{post_name}}}">{{{post_title}}}</a></p>
 				</template>

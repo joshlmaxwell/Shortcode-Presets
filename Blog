@@ -1,0 +1,33 @@
+add_shortcode('hc2_amp_blog', 'hc2_amp_blog');
+function hc2_amp_blog($atts, $content = null) {
+	ob_start(); 
+		?>
+
+			<amp-list load-more='auto' layout='responsive' width='1200' height='1200' src='<?php echo str_replace('http:','https:',get_rest_url()); ?>hc2/v1/hc2_amp_blog'>
+				<template type='amp-mustache'>
+					<div class="hcube_blog_item">
+						<a href="/{{{post_name}}}">
+							<img class="hcube_blog_thumb" src="{{{thumb}}}"/>
+							<h3>{{{post_title}}}</h3> 
+							<p>{{{excerpt}}}</p>
+						</a>
+					</div>
+				</template>
+			</amp-list>
+
+		<?php
+	return ob_get_clean(); 
+}
+add_action('rest_api_init',function(){register_rest_route('hc2/v1','/hc2_amp_blog/',array('methods'=>'GET','callback'=>function ( $request ) {  
+
+	hc2_prepare_amp_rest_api();
+
+	$posts = get_posts( array( numberposts => -1, post_type => array ( post ) ) );       
+	foreach($posts as $key => $post) {
+		$posts[$key]->thumb = get_the_post_thumbnail_url( $post ); 
+		$posts[$key]->excerpt = get_the_excerpt( $post );
+	}
+	echo json_encode( array(items=>$posts) );
+
+},'permission_callback' => '__return_true'));});
+

@@ -5,15 +5,13 @@ function hc2_accordion($atts, $content = null) {
 		</div></div></section>
 		</amp-accordion></div>";
 
-	if( in_array('start',$atts) ) return '
+	if( in_array('first',$atts) ) return '
 		<script async="" custom-element="amp-accordion" src="https://cdn.ampproject.org/v0/amp-accordion-0.1.js"></script>
 		<div itemscope="" itemtype="https://schema.org/FAQPage">
-    			<amp-accordion expand-single-section="" animate="" disable-session-states=""> ';
+    			<amp-accordion expand-single-section="" animate="" disable-session-states="">
+    				<section itemscope="" itemprop="mainEntity" itemtype="https://schema.org/Question"><header itemprop="name">';
 
-	if( in_array('first',$atts) && in_array('question',$atts) ) return '
-		<section itemscope="" itemprop="mainEntity" itemtype="https://schema.org/Question"><header itemprop="name">';
-
-	if( in_array('next',$atts) && in_array('question',$atts) ) return '
+	if( in_array('question',$atts) ) return '
 		</div></div></section>
 		<section itemscope="" itemprop="mainEntity" itemtype="https://schema.org/Question"><header itemprop="name">';
 

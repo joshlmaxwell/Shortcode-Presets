@@ -1,0 +1,23 @@
+add_shortcode('hc2_accordion', 'hc2_accordion');
+function hc2_accordion($atts, $content = null) {
+			
+	if( in_array('end',$atts) ) return "
+		</div></div></section>
+		</amp-accordion></div>";
+
+	if( in_array('start',$atts) ) return '
+		<script async="" custom-element="amp-accordion" src="https://cdn.ampproject.org/v0/amp-accordion-0.1.js"></script>
+		<div itemscope="" itemtype="https://schema.org/FAQPage">
+    			<amp-accordion expand-single-section="" animate="" disable-session-states=""> ';
+
+	if( in_array('first',$atts) && in_array('question',$atts) ) return '
+		<section itemscope="" itemprop="mainEntity" itemtype="https://schema.org/Question"><header itemprop="name">';
+
+	if( in_array('next',$atts) && in_array('question',$atts) ) return '
+		</div></div></section>
+		<section itemscope="" itemprop="mainEntity" itemtype="https://schema.org/Question"><header itemprop="name">';
+
+	if( in_array('answer',$atts) ) return '
+		</header><div itemscope="" itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><div itemprop="text">';
+		
+}

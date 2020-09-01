@@ -7,8 +7,9 @@
 	//		- logo
 	//		- logo zoom animation
 	//		- multiple sizes
+	//		- mega menu
 
-	//	note that you must specify a screen to switch to mobile css manually using the maxwidth property
+	
 
 	add_shortcode('hc2_nav', 'hc2_nav_shortcode');
 	function hc2_nav_shortcode($atts, $content = null) {
@@ -16,8 +17,8 @@
 		//shortcode properties
 		$a = shortcode_atts(array( 
 				'fromtop' => '0',
-				'menu' => '',
-				'maxwidth' => '1000px', 
+				'menu' => '',				//	you must specify a menu location
+				'maxwidth' => '1000px', 		//	set the width to collapse on mobile
 				'style' => 'normal', 
 				'color' => '', 
 				'background' => '',

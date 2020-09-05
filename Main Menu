@@ -424,7 +424,7 @@
 		   $href = esc_attr( $item->url );
 		   
 	     $attributes .= !empty( $item->url ) && empty( $item->ext ) && empty( $item->lang ) ? ' data-vars-name="Menu Item - '.$item->title.'" href="' . $href . '"' : '';
-	     $attributes .= !empty( $item->lang ) ? ' data-vars-name="Menu Item - '.$item->title.'" href="' get_site_url() .'/'. get_post_meta( get_post_meta( get_the_ID(), 'hcube_mainpage', true), 'hcube_eq_page_'.strtolower($item->title), true ) . '"' : '';
+	     $attributes .= !empty( $item->lang ) ? ' data-vars-name="Menu Item - '.$item->title.'" href="' . get_site_url() .'/'. get_post_meta( get_post_meta( get_the_ID(), 'hcube_mainpage', true), 'hcube_eq_page_'.strtolower($item->title), true ) . '"' : '';
 		   
 		   if(strpos( $class_names, 'has-children') !== false){
 				$attributes .= ' tabindex=0 role=button aria-label="'.$item->title.'" data-vars-name="Open Menu - '.$item->title.'" on="tap:menu-item-'.$uid.'-'.$item->ID.'.toggleClass(class=hcube-menu-open),menu-'.$args->menu->slug.'.toggleClass(class=hcube-menu-subopen-'.$uid.'-'.$item->ID.')';

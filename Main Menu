@@ -16,7 +16,7 @@
 
 		//shortcode properties
 		$a = shortcode_atts(array( 
-				'fromtop' => '0',
+				'fixtop' => '0',
 				'menu' => '',				//	you must specify a menu location
 				'maxwidth' => '1000px', 		//	set the width to collapse on mobile
 				'style' => 'normal', 
@@ -39,7 +39,7 @@
 		ob_start(); 
 			?>
 			
-				<nav id="hcube-menu" class="hcube-menu hcube-menu-right hcube-menu-<?php echo $a['style']; ?> hcube-menu-<?php echo $a['size']; ?>" data-full-width="true" style="top:<?php echo $a['fromtop']; ?>px" >
+				<nav id="hcube-menu" class="hcube-menu hcube-menu-right hcube-menu-<?php echo $a['style']; ?> hcube-menu-<?php echo $a['size']; ?>" data-full-width="true" style="top:<?php echo $a['fixtop']; ?>px" >
 					<div class="hcube-menu-inner">
 						<div id="hcube-animtar" class="hcube-menu-logo hcube-animation-wrapper hcube-animation-logo"></div>
 						<?php echo wp_nav_menu(array('walker' => new rc_scm_walker,'echo' => false,'theme_location' => $a['menu'],'items_wrap' => '<ul id="%1$s" class="%2$s">%3$s</ul>')); ?>

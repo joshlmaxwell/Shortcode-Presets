@@ -1,0 +1,18 @@
+add_shortcode('hc2_amp-carousel', 'hc2_carousel');
+function hc2_carousel($atts, $content = null) {
+        $a = shortcode_atts(array( 'height' => 300, 'delay' => 3000 ), $atts);
+			
+	if( in_array('end',$atts) ) return "
+		</amp-base-carousel>";
+
+	return '<amp-base-carousel 
+		horizontal="'.(in_array('vertical',$atts)?'false':'true').'"
+		type="slides" 
+		auto-advance="true" 
+		delay="'.$a['delay'].'" 
+		height="'.$a['height'].'" 
+		layout="fixed-height">';
+
+		
+}
+

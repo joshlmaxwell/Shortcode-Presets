@@ -124,7 +124,7 @@
 							div#hcube-animtar:not(#_) {max-width: calc(<?php echo (10000/$a['logoscale'])+'% - '+(10000/$a['logoscale']); ?>px );margin-left: 25px;background-size: contain;background-position: 50% 50%;}
 						}
 						<?php if( $a['zoom'] ){ ?>
-							nav#hcube-menu .hcube-animation-logo{transform: translate(0px,0px) scale(2.5);}
+							nav#hcube-menu .hcube-animation-logo{transform: translate(0px,0px) scale(<?php echo $a['logoscale']/100; ?>);}
 							nav#hcube-menu .hcube-menu-open > .hcube-hamburger {background:inherit !important;}
 						<?php } ?>
 					</style>

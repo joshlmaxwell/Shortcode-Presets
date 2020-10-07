@@ -7,7 +7,7 @@ function hc2_amp_blog($atts, $content = null) {
 				<template type='amp-mustache'>
 					<div class="hcube_blog_item">
 						<a href="/{{{post_name}}}">
-							<img class="hcube_blog_thumb" src="{{{thumb}}}" object-fit="contain" width="600" height="400" layout="intrinsic"/>
+							<amp-img class="hcube_blog_thumb" src="{{{thumb}}}" object-fit="contain" width="600" height="400" layout="intrinsic"></amp-img>
 							<h3>{{{post_title}}}</h3> 
 							<p>{{{excerpt}}}</p>
 						</a>

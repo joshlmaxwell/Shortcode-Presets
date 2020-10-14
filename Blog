@@ -6,8 +6,8 @@ function hc2_amp_blog($atts, $content = null) {
 			<amp-list load-more='auto' layout='responsive' width='1200' height='1200' src='<?php echo str_replace('http:','https:',get_rest_url()); ?>hc2/v1/hc2_amp_blog'>
 				<template type='amp-mustache'>
 					<div class="hcube_blog_item">
-						<a href="/{{{post_name}}}">
-							<amp-img class="hcube_blog_thumb" src="{{{thumb}}}" object-fit="contain" width="600" height="400" layout="intrinsic"></amp-img>
+						<a href="/{{post_name}}">
+							<amp-img class="hcube_blog_thumb" src="{{thumb}}" object-fit="contain" width="600" height="400" layout="intrinsic"></amp-img>
 							<h3>{{{post_title}}}</h3> 
 							<p>{{{excerpt}}}</p>
 						</a>

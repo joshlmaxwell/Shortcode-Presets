@@ -1,19 +1,31 @@
 add_shortcode('hc2_amp-carousel', 'hc2_carousel');
 function hc2_carousel($atts, $content = null) {
-        $a = shortcode_atts(array( 'height' => 300, 'delay' => 3000 ), $atts);
+        $a = shortcode_atts(array( 'count' => 3, 'height' => 300, 'delay' => 3000, 'uniqueid' => 'uni1' ), $atts);
+
+	if( in_array('buttons',$atts) ){
+		$str = '<center class="carousel-preview">';
+		for( $x = 0; $x < $a['count']; $x++ ) $str .= '<button on="tap:'.$a['uniqueid'].'.goToSlide(index='.$x.')">'.($x+1).'</button>';
+		return $str . '</center>';
+	}
 			
 	if( in_array('end',$atts) ) return "
 		</amp-base-carousel>";
 
 	return '<amp-base-carousel 
-		auto-advance="true" 
-   		auto-advance-interval="'.$a['delay'].'" 
-		height="'.$a['height'].'" 
-		layout="fixed-height" 
-    		snap-align="center" 
-		loop="true" 
-    		visible-count="1"
-    		amp-fx="fade-in" >';
+			id="'.$a['uniqueid'].'"
+			auto-advance="true" 
+   			auto-advance-interval="'.$a['delay'].'" 
+			height="'.$a['height'].'" 
+			layout="fixed-height" 
+    			snap-align="center" 
+			loop="true" 
+    			visible-count="1"
+    			amp-fx="fade-in" >
+
+				<style>
+					center.carousel-preview > * {border-radius: 50%;border: 1px solid black;width: 20px;height: 20px;font-size: 12px;text-align: center;margin: 9px 3px;cursor: pointer;}
+					center.carousel-preview {border-top: 1px solid;}
+				</style>';
 
 		
 }

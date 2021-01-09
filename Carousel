@@ -3,14 +3,17 @@ function hc2_carousel($atts, $content = null) {
         $a = shortcode_atts(array( 'height' => 300, 'delay' => 3000 ), $atts);
 			
 	if( in_array('end',$atts) ) return "
-		</amp-carousel>";
+		</amp-base-carousel>";
 
-	return '<amp-carousel 
-		type="slides" 
-		autoplay 
-		delay="'.$a['delay'].'" 
+	return '<amp-base-carousel 
+		auto-advance="true" 
+   		auto-advance-interval="'.$a['delay'].'" 
 		height="'.$a['height'].'" 
-		layout="fixed-height">';
+		layout="fixed-height" 
+    		snap-align="center" 
+		loop="true" 
+    		visible-count="1"
+    		amp-fx="fade-in" >';
 
 		
 }

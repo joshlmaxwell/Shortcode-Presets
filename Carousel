@@ -20,12 +20,7 @@ function hc2_carousel($atts, $content = null) {
     			snap-align="center" 
 			loop="true" 
     			visible-count="1"
-    			amp-fx="fade-in" >
-
-				<style>
-					center.carousel-preview > * {border-radius: 50%;border: 1px solid black;width: 20px;height: 20px;font-size: 12px;text-align: center;margin: 9px 3px;cursor: pointer;}
-					center.carousel-preview {border-top: 1px solid;}
-				</style>';
+    			amp-fx="fade-in" >';
 
 		
 }

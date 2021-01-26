@@ -22,7 +22,7 @@ add_action('rest_api_init',function(){register_rest_route('hc2/v1','/hc2_amp_blo
 
 	hc2_prepare_amp_rest_api();
 
-	$posts = get_posts( array( 'numberposts' => -1, 'post_type' => array ( post ) ) );       
+	$posts = get_posts( array( 'numberposts' => -1, 'post_type' => array ( 'post' ) ) );       
 	foreach($posts as $key => $post) {
 		$posts[$key]->thumb = get_the_post_thumbnail_url( $post ); 
 		$posts[$key]->excerpt = get_the_excerpt( $post );

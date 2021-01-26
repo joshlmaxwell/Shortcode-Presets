@@ -17,7 +17,7 @@ add_action('rest_api_init',function(){register_rest_route('hc2/v1','/hc2_amp_rec
 	hc2_prepare_amp_rest_api();
 
 	$posts = get_posts( array( 'numberposts' => $_GET['count'], 'post_type' => array ( 'post' ) ) ); 
-	echo json_encode( array(items=>$posts) );
+	echo json_encode( array('items'=>$posts) );
 
 },'permission_callback' => '__return_true'));});
 

@@ -121,7 +121,7 @@
 							nav#hcube-menu ul ul li.hcube-menu-open > ul.sub-menu {position: relative;display: inline-block;width: 100%;}
 						}
 						@media (max-width:450px){
-							div#hcube-animtar:not(#_) {max-width: calc(<?php echo (10000/$a['logoscale'])+'% - '+(10000/$a['logoscale']); ?>px );margin-left: 25px;background-size: contain;background-position: 50% 50%;}
+							div#hcube-animtar:not(#_) {max-width: calc(<?php echo (10000/$a['logoscale']).'% - '.(10000/$a['logoscale']); ?>px );margin-left: 25px;background-size: contain;background-position: 50% 50%;}
 						}
 						<?php if( $a['zoom'] ){ ?>
 							nav#hcube-menu .hcube-animation-logo{transform: translate(0px,0px) scale(<?php echo $a['logoscale']/100; ?>);}

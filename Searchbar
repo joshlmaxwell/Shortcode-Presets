@@ -1,0 +1,42 @@
+add_shortcode('hc2_searchbar', 'hc2_searchbar');
+function hc2_searchbar($atts, $content = null) {
+	ob_start(); 
+		?>
+
+			<div class='hc2_searchbar'>
+				<form onsubmit='hc2_search(this,event)'>
+				  <input />
+				  <button type='submit'>Search Site</div>
+				</form>
+				<div class='hc2_search_blackout'></div>
+				<div class='hc2_searchresults'>
+          				<div onclick='hc2_closesearch(this)'>Close</div>
+          				<form onsubmit='hc2_search(this,event)'>
+          				  <input />
+          				  <button type='submit'>Search Site</div>
+          				</form>
+          				<iframe src='' ></iframe>         
+				</div>
+			</div>
+      
+      <script>
+        function hc2_search(e,ev){
+          ev.preventDefault();
+          e.parentNode.getElementsByClassName('hc2_searchresults')[0].dataset.open = 'true';
+          e.parentNode.getElementsByClassName('hc2_search_blackout')[0].dataset.open = 'true';
+          e.parentNode.getElementsByTagName('IFRAME')[0].src = '<?php echo str_replace('http:','https:',get_rest_url()); ?>hc2/v1/hc2_search?v=' + e.getElementsByTagName('INPUT')[0].value;
+        }
+      </script>
+
+		<?php
+	return ob_get_clean(); 
+}
+add_action('rest_api_init',function(){register_rest_route('hc2/v1','/hc2_search/',array('methods'=>'GET','callback'=>function ( $request ) {  
+
+		$v = strtolower(preg_replace("/[^A-Za-z0-9 ]/", '', $_GET['v']));
+		global $wpdb;
+		$rows = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."posts WHERE post_excerpt COLLATE UTF8_GENERAL_CI LIKE '%".$v."%' OR post_title COLLATE UTF8_GENERAL_CI LIKE '%".$v."%' OR post_content COLLATE UTF8_GENERAL_CI LIKE '%".$v."%' ;");
+		foreach( $rows as $row ) echo $row->post_title;
+
+},'permission_callback' => '__return_true'));});
+

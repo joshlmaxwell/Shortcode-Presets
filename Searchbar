@@ -47,20 +47,33 @@ function hc2_searchbar($atts, $content = null) {
 		<?php
 	return ob_get_clean(); 
 }
+
 add_action('rest_api_init',function(){register_rest_route('hc2/v1','/hc2_search/',array('methods'=>'GET','callback'=>function ( $request ) {  
 		header('Content-type: text/html');
 		$v = strtolower(preg_replace("/[^A-Za-z0-9 ]/", '', $_GET['v']));
+		if( strlen( $v ) < 3 ) { echo '<center><p>Query too short</p></center>'; return; }
 		global $wpdb;
 		$rows = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."posts WHERE ( post_type = 'page' OR post_type = 'post' ) AND ( post_excerpt LIKE '%".$v."%' OR post_title LIKE '%".$v."%' OR post_content LIKE '%".$v."%' ) ;");
+		if( !count( $rows ) ) { echo '<center><p>No Results</p></center>'; return; }
+		usort($rows, function($rowa, $rowb) use ($v) {
+		    $a = substr_count(strtolower($rowa->post_excerpt), $v);
+		    $b = substr_count(strtolower($rowb->post_excerpt), $v); 
+		    return ($a == $b) ? 0 : ( ($a > $b) ? -1 : 1 );
+		});	
+		usort($rows, function($rowa, $rowb) use ($v) {
+		    $a = substr_count(strtolower($rowa->post_title), $v);
+		    $b = substr_count(strtolower($rowb->post_title), $v); 
+		    return ($a == $b) ? 0 : ( ($a > $b) ? -1 : 1 );
+		});	
 		foreach( $rows as $row ) if( !get_post_meta($row->ID,'hcube_sitemap_hide',1) ) { ?>
-		    <div class='hc2_search_item'>
+		    <a target="_parent" href='<?php echo get_page_link( $row->ID ); ?>' class='hc2_search_item'>
 		        <h2><?php echo $row->post_title; ?></h2>
 		        <img src='<?php echo get_the_post_thumbnail_url($row->ID,'full'); ?>' />
 		        <p><?php echo $row->post_excerpt; ?></p>
-		    </div>
+		    </a>
 		    <style>
 		        .hc2_search_item img {height: 100px;float: left;margin-right: 20px;}
-		        .hc2_search_item {display: block;overflow: hidden;padding: 20px;border-top: 1px solid;cursor: pointer;transition: all .2s;max-width: 650px;margin: auto;}
+		        .hc2_search_item {color:black;text-decoration:none;display: block;overflow: hidden;padding: 20px;border-top: 1px solid;cursor: pointer;transition: all .2s;max-width: 650px;margin: auto;}
 		        .hc2_search_item p {font-size: 16px;font-family: arial;padding: 20px;}
 		        .hc2_search_item h2 {font-family: arial;font-size: 18px;}
 		        .hc2_search_item:hover {outline: 4px solid gray;background: #e0e0e0;}

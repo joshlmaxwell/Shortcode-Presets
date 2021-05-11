@@ -1,0 +1,60 @@
+add_filter( 'the_content', 'filter_the_content_hc2_lazyload', 1 );
+function filter_the_content_hc2_lazyload( $content ) {
+		
+        if( strpos( $content, '[hc2_lazyload]' ) === false ) return $content;
+
+	ob_start(); 
+		?>
+
+			<div class="hc2_lazycontainer"></div>
+			<style>.hc2_lazycontainer{padding-top:1000px;}</style>
+			<script>
+				if (!'IntersectionObserver' in window &&
+				    !'IntersectionObserverEntry' in window &&
+ 				    !'intersectionRatio' in window.IntersectionObserverEntry.prototype) {
+				        hc2_lazycontainer_load();
+				}else{
+					var observer = new IntersectionObserver(function(entries) {
+						if(entries[0].isIntersecting === true) hc2_lazycontainer_load();
+					}, { threshold: [0.2] });
+					observer.observe(document.getElementsByClassName("hc2_lazycontainer")[0]);
+				}
+				function hc2_lazycontainer_load(){
+					var lazycontainer = document.getElementsByClassName('hc2_lazycontainer')[0];
+					var xhttp = new XMLHttpRequest();
+					xhttp.onreadystatechange = function() {
+						if (this.readyState == 4 && this.status == 200) {
+							lazycontainer.outerHTML = this.responseText;
+						}
+					}
+					xhttp.open("GET", "<?php echo get_site_url(); ?>/wp-json/hc2/v1/lazyload/?id=<?php echo get_the_ID(); ?>", true);
+					xhttp.send();
+				}
+			</script>
+
+		<?php
+
+        return explode('[hc2_lazyload',$content)[0].ob_get_clean();
+}
+
+
+add_action('rest_api_init',function(){register_rest_route('hc2/v1','/lazyload/',array('methods'=>'GET','callback'=>function ( $request ) {  
+
+	$content = do_shortcode(apply_filters('the_content',explode('[hc2_lazyload]',get_post_field('post_content', $_GET['id']))[1]));
+        $sections = explode("<!-- wp:block", $content); 
+        if( count( $sections ) > 1 ){
+            $x = 0;
+            foreach( $sections as &$section ){
+                $x ++;
+                if($x){
+                    $id = explode(",", explode(":", $section )[1])[0];
+                    $block = do_shortcode(apply_filters('the_content', get_post_field('post_content', $id) ));
+                    $section .= $block;
+                }
+            }
+            $content = implode( "<!-- wp:block", $sections );
+        }
+	echo $content;
+
+},'permission_callback' => '__return_true'));});
+

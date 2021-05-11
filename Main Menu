@@ -1,15 +1,5 @@
 	
-//	the main menu
-
-	//	mostly built with css and wordpress's built in nav walker to generate the html
-	//	some additional features are
-	//		- mobile menu css
-	//		- logo
-	//		- logo zoom animation
-	//		- multiple sizes
-	//		- mega menu
-
-	
+//	main menu v2.1
 
 	add_shortcode('hc2_nav', 'hc2_nav_shortcode');
 	function hc2_nav_shortcode($atts, $content = null) {
@@ -17,9 +7,10 @@
 		//shortcode properties
 		$a = shortcode_atts(array( 
 				'fixtop' => '0',
-				'menu' => '',				//	you must specify a menu location
-				'maxwidth' => '1000px', 		//	set the width to collapse on mobile
+				'menu' => '',		
+				'maxwidth' => '1000px', 
 				'style' => 'normal', 
+				'layout' => 'normal', 
 				'color' => '', 
 				'background' => '',
 				'dropdown' => '', 
@@ -128,6 +119,44 @@
 							nav#hcube-menu .hcube-menu-open > .hcube-hamburger {background:inherit !important;}
 						<?php } ?>
 					</style>
+<?php if( $a['layout'] == 'cover' ){ ?>
+<style>
+nav#hcube-menu {position: absolute; }
+ul#menu-main-menu a {text-align: right;}
+ul#menu-main-menu {background-color: transparent !important;border: none !IMPORTANT;padding-top: 20px !important;top: 0 !important;margin-top: 0 !important;}
+.hcube-hamburger {z-index: 111111;border: none !important;}
+.menu-main-menu-container {overflow: hidden;}
+.hcube-menu-inner {transition: opacity 1s;height:120vh !important;min-height: -webkit-fill-available !important;overflow:scroll;-webkit-overflow-scrolling:touch;}
+.hcube-menu-open > .hcube-menu-inner {opacity: 1;pointer-events:initial;}
+.hcube-menu-inner {pointer-events:none;top:70px;opacity: 0;}
+ul#menu-main-menu {width: 100% !important;box-shadow: none !important;}
+nav#hcube-menu {position: fixed;background: #00000024;}
+ul.sub-menu {width: calc( 100% - 60px ) !important;opacity: 0 !important;}
+nav#hcube-menu li.hcube-menu-open > ul.sub-menu {opacity: 1 !important;border: none !important;border-top: 1px solid white !important;border-bottom: 1px solid white !important;box-shadow: 0 0 110px 40px black;}
+nav#hcube-menu.hcube-menu-open {background: #0000007a;}
+nav#hcube-menu {transition: background .5s;}
+ul.sub-menu {background: black !important;border: none !important;left: 0 !important;width: 100% !important;}
+.hcube-menu-inner {max-width: 100% !IMPORTANT;}
+nav#hcube-menu .sub-menu li.hcube-menu-open > a:not(#_) {background: black !IMPORTANT;text-align: left;z-index: 11111;position: relative;border: none !IMPORTANT;}
+nav#hcube-menu.hcube-menu-open:before {opacity: 1;}
+nav#hcube-menu:before {background: linear-gradient(260deg, black, transparent);height: 200vh;width: 100%;display: block;content: '';opacity: 0;position: absolute;transition: all 1s;pointer-events: none !important;}
+ul#menu-main-menu *:not(#_):not(#_):not(#_):not(#_) {border: none !important;outline: none !IMPORTANT;}
+nav#hcube-menu > div > div > ul > li.hcube-menu-open > a {background: black;color: white !important;text-align: left;z-index: 111111;position: relative;}
+nav a:after {display: none !important;}
+nav ul a:not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_) {border-right: 3px solid transparent !important;border-left: 3px solid transparent !important;display: inline-block !important;width: 300px !important;text-align: center;font-size: 17px;transition: all .7s;height: auto;padding: 20px 20px 20px 50px;position: relative;border-radius:50px;}
+nav ul ul {display: none !important;}
+nav ul a:not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_) > i {margin-left: 0;text-decoration:none !important;font-size: 24px;position: absolute;left: 25px;}
+nav ul li:not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_) {text-align: right !important;padding-right:20px;}
+nav ul a:not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):hover {border-right: 40px solid #7bb442 !important;background:#ffffff24;}
+@media (max-width:800px){
+  nav ul li:not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_){text-align:center !Important;padding-right:0px;}
+  nav#hcube-menu:before{background:linear-gradient(180deg, black, transparent);}
+  nav ul a:not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_) {border-right: 4px solid #ffffffd4 !important;margin-bottom:20px;border-radius:0;}
+}
+.hcube-menu-inner {overflow: hidden !IMPORTANT;}
+nav:after {background: url(https://wildwood.dgstesting.com/wp-content/uploads/2021/04/Logo-White.png);background-repeat: no-repeat;background-size: 120px;background-position: center center;height: 70px;content: '';display: block;width: 150px;top: 0;left: 0;position: absolute;}
+</style>
+<?php } ?>
 					
 				</nav>
 				

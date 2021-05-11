@@ -31,7 +31,7 @@
 			?>
 			
 				<nav id="hcube-menu" class="hcube-menu hcube-menu-right hcube-menu-<?php echo $a['style']; ?> hcube-menu-<?php echo $a['size']; ?>" data-full-width="true" style="top:<?php echo $a['fixtop']; ?>px" >
-					<div class="hcube-menu-inner">
+					<div class="hcube-menu-inner" on="tap:hcube-menu.toggleClass(class=hcube-menu-open)">
 						<div id="hcube-animtar" class="hcube-menu-logo hcube-animation-wrapper hcube-animation-logo"></div>
 						<?php echo wp_nav_menu(array('walker' => new rc_scm_walker,'echo' => false,'theme_location' => $a['menu'],'items_wrap' => '<ul id="%1$s" class="%2$s">%3$s</ul>')); ?>
 					</div>
@@ -151,7 +151,7 @@ nav ul a:not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):hover {
 @media (max-width:800px){
   nav ul li:not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_){text-align:center !Important;padding-right:0px;}
   nav#hcube-menu:before{background:linear-gradient(180deg, black, transparent);}
-  nav ul a:not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_) {border-right: 4px solid #ffffffd4 !important;margin-bottom:20px;border-radius:0;}
+  nav ul a:not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_) {margin-bottom: 10px;border-right: 40px solid #7bb442 !important;background: #ffffff24;border-radius: 50px;}
 }
 .hcube-menu-inner {overflow: hidden !IMPORTANT;}
 nav:after {background: url(https://wildwood.dgstesting.com/wp-content/uploads/2021/04/Logo-White.png);background-repeat: no-repeat;background-size: 120px;background-position: center center;height: 70px;content: '';display: block;width: 150px;top: 0;left: 0;position: absolute;}

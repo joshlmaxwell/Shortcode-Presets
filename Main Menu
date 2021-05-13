@@ -160,7 +160,7 @@ nav ul a:not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):hover {
   nav ul a:not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_) {margin-bottom: 10px;border-right: 40px solid <?php echo $accent; ?> !important;background: #ffffff24;border-radius: 50px;}
 }
 .hcube-menu-inner {overflow: hidden !IMPORTANT;}
-nav:after {background: url(<?php echo $a['media']; ?>);background-repeat: no-repeat;background-size: 120px;background-position: center center;height: 70px;content: '';display: block;width: 150px;top: 0;left: 0;position: absolute;}
+nav:after {    filter: brightness(0) invert(1);background: url(<?php echo $a['media']; ?>);background-repeat: no-repeat;background-size: 120px;background-position: center center;height: 70px;content: '';display: block;width: 150px;top: 0;left: 0;position: absolute;}
 </style>
 <?php } ?>
 					

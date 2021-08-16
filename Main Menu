@@ -1,5 +1,5 @@
 	
-//	main menu v2.1.2
+//	main menu v2.1.3
 
 	add_shortcode('hc2_nav', 'hc2_nav_shortcode');
 	function hc2_nav_shortcode($atts, $content = null) {
@@ -28,7 +28,7 @@
 
 		$accent = $a['accent'];
 		if( $a['layout'] == 'cover' ) {
-			$a['maxwidth'] = '100000000000000000000px';
+			$a['maxwidth'] = '1000000px';
 			$a['accent'] = '#ffffff';
 		}
 		

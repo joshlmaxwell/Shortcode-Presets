@@ -1,3 +1,5 @@
+//	searchbar v1.1
+
 add_shortcode('hc2_searchbar', 'hc2_searchbar');
 function hc2_searchbar($atts, $content = null) {
 	ob_start(); 
@@ -53,7 +55,7 @@ add_action('rest_api_init',function(){register_rest_route('hc2/v1','/hc2_search/
 		$v = strtolower(preg_replace("/[^A-Za-z0-9 ]/", '', $_GET['v']));
 		if( strlen( $v ) < 3 ) { echo '<center><p>Query too short</p></center>'; return; }
 		global $wpdb;
-		$rows = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."posts WHERE ( post_type = 'page' OR post_type = 'post' ) AND ( post_excerpt LIKE '%".$v."%' OR post_title LIKE '%".$v."%' OR post_content LIKE '%".$v."%' ) ;");
+		$rows = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."posts WHERE ( post_type = 'page' OR post_type = 'post' ) AND ( post_status = 'publish' ) AND ( post_excerpt LIKE '%".$v."%' OR post_title LIKE '%".$v."%' OR post_content LIKE '%".$v."%' ) ;");
 		if( !count( $rows ) ) { echo '<center><p>No Results</p></center>'; return; }
 		usort($rows, function($rowa, $rowb) use ($v) {
 		    $a = substr_count(strtolower($rowa->post_excerpt), $v);

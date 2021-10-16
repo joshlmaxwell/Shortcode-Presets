@@ -1,4 +1,4 @@
-add_shortcode('hc2_accordion', 'hc2_accordion');
+add_shortcode('hc2_accordion', 'hc2_accordion'); 
 function hc2_accordion($atts, $content = null) {
 			
 	if( in_array('end',$atts) ) return "
